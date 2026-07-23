@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Service {
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String?
+  price        Float
+  durationMin  Int           @default(30)
+  active       Boolean       @default(true)
+  appointments Appointment[]
+}
+
+model Appointment {
+  id            Int      @id @default(autoincrement())
+  customerName  String
+  customerPhone String
+  service       Service  @relation(fields: [serviceId], references: [id])
+  serviceId     Int
+  date          DateTime
+  status        String   @default("pending")
+  createdAt     DateTime @default(now())
+}
+
+model Faq {
+  id       Int     @id @default(autoincrement())
+  question String
+  answer   String
+  keywords String?
+}
+
+model ConversationState {
+  id        Int      @id @default(autoincrement())
+  phone     String   @unique
+  step      String   @default("menu")
+  data      String?
+  updatedAt DateTime @updatedAt
+}
